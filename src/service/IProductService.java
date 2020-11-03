@@ -9,6 +9,6 @@ public interface IProductService {
     List<Product> findAll();
     Product findById(int id);
     void save(Product product);
-    void edit(int id);
+    void edit(int id, Product product);
     void delete(int id);
 }

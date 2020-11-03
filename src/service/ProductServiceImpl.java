@@ -1,5 +1,6 @@
 package service;
 
+import com.sun.javafx.iio.gif.GIFImageLoaderFactory;
 import model.Product;
 
 import java.util.ArrayList;
@@ -22,9 +23,9 @@ public class ProductServiceImpl implements IProductService{
 
     @Override
     public Product findById(int id) {
-        for(int i=0;i<products.size();i++)
-            if(id==products.get(i).getId())
-                return products.get(i);
+        for (Product product : products)
+            if (id == product.getId())
+                return product;
             return null;
     }
 
@@ -34,7 +35,11 @@ public class ProductServiceImpl implements IProductService{
     }
 
     @Override
-    public void edit(int id) {
+    public void edit(int id,Product product) {
+        for (Product p : products) {
+            if (id == p.getId())
+                products.set(id,p);
+        }
 
     }
 

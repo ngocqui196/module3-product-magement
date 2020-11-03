@@ -26,12 +26,58 @@ public class ProductServlet extends HttpServlet {
                 addProduct(request,response);
                 break;
             case "edit":
+                editFrom(request,response);
                 break;
             default:
                 listProduct(request,response);
+                break;
         }
     }
 
+    private void editFrom(HttpServletRequest request, HttpServletResponse response) {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String desc = request.getParameter("desc");
+
+        Product product = this.service.findById(id);
+        RequestDispatcher dispatcher;
+        if (product == null) {
+            dispatcher = request.getRequestDispatcher("error-404.jsp");
+        }else {
+            product.setId(id);
+            product.setName(name);
+            product.setDesc(desc);
+            this.service.edit(id,product);
+            request.setAttribute("product",product);
+            request.setAttribute("message","Đã sửa thành công");
+            dispatcher = request.getRequestDispatcher("WEB-INF/views/edit.jsp");
+        }try {
+            dispatcher.forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action=request.getParameter("action");
+        if(action==null)
+            action="";
+        switch(action){
+            case "create":
+                showCreateForm(request,response);
+                break;
+            case "edit":
+                showEditForm(request,response);
+                break;
+            default:
+                listProduct(request,response);
+                break;
+        }
+
+    }
     private void addProduct(HttpServletRequest request, HttpServletResponse response) {
         int id=Integer.parseInt(request.getParameter("id"));
         String name=request.getParameter("name");
@@ -50,29 +96,15 @@ public class ProductServlet extends HttpServlet {
 
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action=request.getParameter("action");
-        if(action==null)
-            action="";
-        switch(action){
-            case "create":
-                showCreateForm(request,response);
-                break;
-            case "edit":
-                showEditForm(request,response);
-                break;
-            default:
-                listProduct(request,response);
-        }
-
-    }
-
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) {
         int id=Integer.parseInt(request.getParameter("id"));
         Product product=service.findById(id);
-        if(product!=null) {
+        RequestDispatcher dispatcher;
+        if(product==null) {
+            dispatcher = request.getRequestDispatcher("error-404.jsp");
+        }else {
             request.setAttribute("product",product);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/views/edit.jsp");
+            dispatcher = request.getRequestDispatcher("WEB-INF/views/edit.jsp");
             try {
                 dispatcher.forward(request, response);
             } catch (ServletException e) {
